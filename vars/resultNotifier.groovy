@@ -95,7 +95,7 @@ def generateTestResultAttachment(script) {
 
     def buildColor = state.currentBuild.result == null ? "good" : "warning"
     def buildStatus = state.currentBuild.result == null ? "Success" : state.currentBuild.result
-    def jobName = "$JOB_BASE_NAME"
+    def jobName = "${state.env.JOB_BASE_NAME}"
 
     def attachments = [
         [
@@ -123,7 +123,7 @@ def generateTestResultAttachment(script) {
         ]
     ]
 
-    if (!"0".equalsIgnoreCase("${failed}")) {
+    if (!"0".equalsIgnoreCase("0")) {
 
         buildStatus = "Unstable"
         buildColor = "warning"
@@ -148,7 +148,7 @@ def generateErrorkMessage (script) {
     state = script
 
     def buildStatus = "Failed"
-    def jobName = "$JOB_BASE_NAME"
+    def jobName = "${state.env.JOB_BASE_NAME}"
 
     def attachments = [
         [
