@@ -40,6 +40,10 @@ def getLastCommitMessage () {
     message = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
 }
 
+def getBranchName () {
+    branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+}
+
 def getTestSummary () {
     def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def summary = ""
@@ -83,6 +87,7 @@ def populateGlobalVariables (script) {
     state = script
     getLastCommitMessage()
     getGitAuthor()
+    getBranchName()
     testSummary = getTestSummary()
 }
 
