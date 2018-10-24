@@ -45,7 +45,7 @@ def getBranchName () {
 }
 
 def getTestSummary () {
-    def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+    def testResultAction = state.currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def summary = ""
 
     if (testResultAction != null) {
@@ -59,9 +59,8 @@ def getTestSummary () {
     } else {
         summary = "No tests found"
     }
-    return summary
+    testSummary = summary
 }
-
 
 def getFailedTests () {
     def testResultAction = state.currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
@@ -88,7 +87,7 @@ def populateGlobalVariables (script) {
     getLastCommitMessage()
     getGitAuthor()
     getBranchName()
-    testSummary = getTestSummary()
+    getTestSummary()
 }
 
 def generateTestResultAttachment(script) {
