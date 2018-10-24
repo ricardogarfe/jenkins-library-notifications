@@ -82,9 +82,9 @@ def getFailedTests = { ->
 
 def populateGlobalVariables (script) {
     state = script
-    getLastCommitMessage()
-    getGitAuthor()
-    testSummary = getTestSummary()
+    resultNotifier.getLastCommitMessage()
+    resultNotifier.getGitAuthor()
+    testSummary = resultNotifier.getTestSummary()
 }
 
 def generateTestResultAttachment(script) {
@@ -132,7 +132,7 @@ def generateTestResultAttachment(script) {
                 color: "${buildColor}",
                 text: "${failedTestsString}",
                 "mrkdwn_in": ["text"],
-                footer: "NIJI QA Tests",
+                footer: "Tests",
                 ts: "${System.currentTimeMillis()/1000}"
             ]
 
@@ -177,7 +177,7 @@ def generateErrorkMessage (script) {
                     short: false
                 ]
             ],
-            footer: "NIJI QA Tests",
+            footer: "Tests",
             ts: "${System.currentTimeMillis()/1000}"
         ]
     ]
