@@ -40,11 +40,11 @@ def getLastCommitMessage () {
     message = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
 }
 
-def getBranchName () {
+def getBranchName() {
     branchName = ${state.env.BRANCH_NAME}
 }
 
-def getTestSummary () {
+def getTestSummary() {
     def testResultAction = state.currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def summary = ""
 
@@ -62,7 +62,7 @@ def getTestSummary () {
     testSummary = summary
 }
 
-def getFailedTests () {
+def getFailedTests() {
     def testResultAction = state.currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def failedTestsString = "```"
 
@@ -82,7 +82,7 @@ def getFailedTests () {
     return failedTestsString
 }
 
-def populateGlobalVariables (script) {
+def populateGlobalVariables(script) {
     state = script
     getLastCommitMessage()
     getGitAuthor()
@@ -124,7 +124,7 @@ def generateTestResultAttachment(script) {
         ]
     ]
 
-    if (!"0".equalsIgnoreCase("0")) {
+    if (!"0".equalsIgnoreCase("${failed}")) {
 
         buildStatus = "Unstable"
         buildColor = "warning"
