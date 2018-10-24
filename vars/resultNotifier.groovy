@@ -17,6 +17,20 @@ def failed = 0
 def skipped = 0
 def branchName = ""
 
+def notifySlack(text, channel, attachments, slackHook) {
+    def slackURL = slackHook
+    def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
+
+    def payload = JsonOutput.toJson([text: text,
+        channel: channel,
+        username: "Jenkins",
+        icon_url: jenkinsIcon,
+        attachments: attachments
+    ])
+
+    sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
+}
+
 def getGitAuthor = {
     def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
     author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
@@ -126,20 +140,6 @@ def generateTestResultAttachment(script) {
     }
 
     return attachments
-}
-
-def notifySlack(text, channel, attachments, slackHook) {
-    def slackURL = slackHook
-    def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
-
-    def payload = JsonOutput.toJson([text: text,
-        channel: channel,
-        username: "Jenkins",
-        icon_url: jenkinsIcon,
-        attachments: attachments
-    ])
-
-    sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
 }
 
 def generateErrorkMessage (script) {
