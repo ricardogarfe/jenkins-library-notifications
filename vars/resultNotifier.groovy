@@ -123,7 +123,7 @@ def generateTestResultAttachment(script) {
         ]
     ]
 
-    if (${failed} > 0) {
+    if (!"0".equalsIgnoreCase("${failed}")) {
 
         buildStatus = "Unstable"
         buildColor = "warning"
