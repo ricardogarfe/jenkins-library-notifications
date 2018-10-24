@@ -41,7 +41,7 @@ def getLastCommitMessage () {
 }
 
 def getBranchName() {
-    branchName = ${state.env.BRANCH_NAME}
+    branchName = "${state.env.BRANCH_NAME}"
 }
 
 def getTestSummary() {
