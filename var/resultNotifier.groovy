@@ -1,0 +1,185 @@
+import hudson.tasks.test.AbstractTestResultAction
+import groovy.json.JsonOutput
+import groovy.json.JsonOutput
+import java.util.Optional
+import hudson.tasks.test.AbstractTestResultAction
+import hudson.model.Actionable
+import hudson.tasks.junit.CaseResult
+import hudson.Util
+
+def state = ""
+
+def author = ""
+def message = ""
+def testSummary = ""
+def total = 0
+def failed = 0
+def skipped = 0
+def branchName = ""
+
+def getGitAuthor = {
+    def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
+    author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
+}
+
+def getLastCommitMessage = {
+    message = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
+}
+
+@NonCPS
+def getTestSummary = { ->
+    def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+    def summary = ""
+
+    if (testResultAction != null) {
+        total = testResultAction.getTotalCount()
+        failed = testResultAction.getFailCount()
+        skipped = testResultAction.getSkipCount()
+
+        summary = "Passed: " + (total - failed - skipped)
+        summary = summary + (", Failed: " + failed)
+        summary = summary + (", Skipped: " + skipped)
+    } else {
+        summary = "No tests found"
+    }
+    return summary
+}
+
+@NonCPS
+def getFailedTests = { ->
+    def testResultAction = state.currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+    def failedTestsString = "```"
+
+    if (testResultAction != null) {
+        def failedTests = testResultAction.getFailedTests()
+
+        if (failedTests.size() > 9) {
+            failedTests = failedTests.subList(0, 8)
+        }
+
+        failedTests.each {
+            failedTestsString = failedTestsString + it.getDisplayName() + "\n\n"
+        }
+
+        failedTestsString = failedTestsString + "```"
+    }
+    return failedTestsString
+}
+
+def populateGlobalVariables (script) {
+    state = script
+    getLastCommitMessage()
+    getGitAuthor()
+    testSummary = getTestSummary()
+}
+
+def generateTestResultAttachment(script) {
+    state = script
+
+    def buildColor = state.currentBuild.result == null ? "good" : "warning"
+    def buildStatus = state.currentBuild.result == null ? "Success" : state.currentBuild.result
+    def jobName = "$JOB_BASE_NAME"
+
+    def attachments = [
+        [
+            title: "${state.OB} - ${jobName}, build #${state.env.BUILD_NUMBER}",
+            title_link: "${state.env.BUILD_URL}",
+            color: "${buildColor}",
+            text: "${buildStatus}\n${author}",
+            "mrkdwn_in": ["fields"],
+            fields: [
+                [
+                    title: "Branch",
+                    value: "${branchName}",
+                    short: true
+                ],
+                [
+                    title: "Test Results",
+                    value: "${testSummary}",
+                    short: true
+                ],
+                [
+                    value: "${message}",
+                    short: true
+                ]
+            ],
+            thumb_url: "${obConfigAvailable["$OB"].flag}"
+        ]
+    ]
+
+    if (failed > 0) {
+
+        buildStatus = "Unstable"
+        buildColor = "warning"
+        def failedTestsString = getFailedTests()
+
+        def failedTestAttachment = [
+                title: "Failed Tests",
+                color: "${buildColor}",
+                text: "${failedTestsString}",
+                "mrkdwn_in": ["text"],
+                footer: "NIJI QA Tests",
+                ts: "${System.currentTimeMillis()/1000}"
+            ]
+
+        attachments.add(failedTestAttachment)
+    }
+
+    return attachments
+}
+
+def notifySlack(text, channel, attachments, slackHook) {
+    def slackURL = slackHook
+    def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png'
+
+    def payload = JsonOutput.toJson([text: text,
+        channel: channel,
+        username: "Jenkins",
+        icon_url: jenkinsIcon,
+        attachments: attachments
+    ])
+
+    sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
+}
+
+def generateErrorkMessage (script) {
+    state = script
+
+    def buildStatus = "Failed"
+    def jobName = "$JOB_BASE_NAME"
+
+    def attachments = [
+        [
+            title: "${state.OB} - ${jobName}, build #${state.env.BUILD_NUMBER}",
+            title_link: "${state.env.BUILD_URL}",
+            color: "danger",
+            author_name: "${author}",
+            text: "${buildStatus}",
+            fields: [
+                [
+                    title: "Branch",
+                    value: "${branchName}",
+                    short: true
+                ],
+                [
+                    title: "Test Results",
+                    value: "${testSummary}",
+                    short: true
+                ],
+                [
+                    title: "Last Commit",
+                    value: "${message}",
+                    short: true
+                ],
+                [
+                    title: "Error",
+                    value: "${e}",
+                    short: false
+                ]
+            ],
+            footer: "NIJI QA Tests",
+            ts: "${System.currentTimeMillis()/1000}"
+        ]
+    ]
+    return attachments
+}
