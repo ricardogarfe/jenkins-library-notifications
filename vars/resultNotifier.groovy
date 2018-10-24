@@ -31,17 +31,16 @@ def notifySlack(text, channel, attachments, slackHook) {
     sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
 }
 
-def getGitAuthor = {
+def getGitAuthor () {
     def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
     author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
 }
 
-def getLastCommitMessage = {
+def getLastCommitMessage () {
     message = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
 }
 
-@NonCPS
-def getTestSummary = { ->
+def getTestSummary () {
     def testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def summary = ""
 
@@ -59,8 +58,8 @@ def getTestSummary = { ->
     return summary
 }
 
-@NonCPS
-def getFailedTests = { ->
+
+def getFailedTests () {
     def testResultAction = state.currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
     def failedTestsString = "```"
 
