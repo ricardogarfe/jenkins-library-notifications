@@ -41,7 +41,7 @@ def getLastCommitMessage () {
 }
 
 def getBranchName () {
-    branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+    branchName = ${state.env.BRANCH_NAME}
 }
 
 def getTestSummary () {
@@ -116,6 +116,7 @@ def generateTestResultAttachment(script) {
                     short: true
                 ],
                 [
+                    title: "Last Commit",
                     value: "${message}",
                     short: true
                 ]
