@@ -95,7 +95,7 @@ def generateTestResultAttachment(script) {
 
     def attachments = [
         [
-            title: "${state.OB} - ${jobName}, build #${state.env.BUILD_NUMBER}",
+            title: "${jobName}, build #${state.env.BUILD_NUMBER}",
             title_link: "${state.env.BUILD_URL}",
             color: "${buildColor}",
             text: "${buildStatus}\n${author}",
@@ -115,8 +115,7 @@ def generateTestResultAttachment(script) {
                     value: "${message}",
                     short: true
                 ]
-            ],
-            thumb_url: "${obConfigAvailable["$OB"].flag}"
+            ]
         ]
     ]
 
@@ -149,7 +148,7 @@ def generateErrorkMessage (script) {
 
     def attachments = [
         [
-            title: "${state.OB} - ${jobName}, build #${state.env.BUILD_NUMBER}",
+            title: "${jobName}, build #${state.env.BUILD_NUMBER}",
             title_link: "${state.env.BUILD_URL}",
             color: "danger",
             author_name: "${author}",
