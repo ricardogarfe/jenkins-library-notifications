@@ -81,9 +81,9 @@ def getFailedTests () {
 
 def populateGlobalVariables (script) {
     state = script
-    resultNotifier.getLastCommitMessage()
-    resultNotifier.getGitAuthor()
-    testSummary = resultNotifier.getTestSummary()
+    getLastCommitMessage()
+    getGitAuthor()
+    testSummary = getTestSummary()
 }
 
 def generateTestResultAttachment(script) {
