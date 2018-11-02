@@ -145,7 +145,7 @@ def generateTestResultAttachment(script) {
     return attachments
 }
 
-def generateErrorkMessage (script, exception) {
+def generateErrorMessage (script, exception) {
     state = script
 
     def buildStatus = "Failed"
