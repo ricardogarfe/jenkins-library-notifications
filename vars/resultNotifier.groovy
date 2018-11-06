@@ -1,6 +1,5 @@
 import hudson.tasks.test.AbstractTestResultAction
 import groovy.json.JsonOutput
-import groovy.json.JsonOutput
 import java.util.Optional
 import hudson.tasks.test.AbstractTestResultAction
 import hudson.model.Actionable
