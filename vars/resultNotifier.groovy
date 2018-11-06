@@ -94,7 +94,7 @@ def populateGlobalVariables() {
 
 def generateTestResultAttachment(script) {
     state = script
-    populateGlobalVariables(script)
+    populateGlobalVariables()
     
     def buildColor = state.currentBuild.result == null ? "good" : "warning"
     def buildStatus = state.currentBuild.result == null ? "Success" : state.currentBuild.result
@@ -150,7 +150,7 @@ def generateTestResultAttachment(script) {
 
 def generateErrorMessage (script, exception) {
     state = script
-    populateGlobalVariables(script)
+    populateGlobalVariables()
 
     def buildStatus = "Failed"
     def jobName = "${state.env.JOB_BASE_NAME}"
