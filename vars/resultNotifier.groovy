@@ -85,8 +85,7 @@ def getFailedTests() {
     return failedTestsString
 }
 
-def populateGlobalVariables(script) {
-    state = script
+def populateGlobalVariables() {
     getLastCommitMessage()
     getGitAuthor()
     getBranchName()
@@ -95,7 +94,8 @@ def populateGlobalVariables(script) {
 
 def generateTestResultAttachment(script) {
     state = script
-
+    populateGlobalVariables(script)
+    
     def buildColor = state.currentBuild.result == null ? "good" : "warning"
     def buildStatus = state.currentBuild.result == null ? "Success" : state.currentBuild.result
     def jobName = "${state.env.JOB_BASE_NAME}"
@@ -150,6 +150,7 @@ def generateTestResultAttachment(script) {
 
 def generateErrorMessage (script, exception) {
     state = script
+    populateGlobalVariables(script)
 
     def buildStatus = "Failed"
     def jobName = "${state.env.JOB_BASE_NAME}"
