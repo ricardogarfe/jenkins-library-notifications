@@ -13,9 +13,9 @@ def state = ""
 @Field String author = ""
 @Field String message = ""
 @Field String testSummary = ""
-@Field Int total = 0
-@Field Int failed = 0
-@Field Int skipped = 0
+@Field Integer total = 0
+@Field Integer failed = 0
+@Field Integer skipped = 0
 @Field String branchName = ""
 
 
