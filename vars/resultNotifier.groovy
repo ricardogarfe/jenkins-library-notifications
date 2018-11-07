@@ -94,7 +94,7 @@ def populateGlobalVariables() {
 def generateTestResultAttachment(script) {
     state = script
     
-    echo state.getClass()
+    echo "Class state type ${state.getClass()}"
     
     populateGlobalVariables()
     
