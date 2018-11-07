@@ -8,7 +8,7 @@ import hudson.tasks.test.AbstractTestResultAction
 import hudson.model.Actionable
 import hudson.Util
 
-def state = ""
+@Field WorkflowScript state = ""
 
 @Field String author = ""
 @Field String message = ""
@@ -92,10 +92,7 @@ def populateGlobalVariables() {
 }
 
 def generateTestResultAttachment(script) {
-    state = script
-    
-    echo "Class state type ${state.getClass()}"
-    
+    state = script  
     populateGlobalVariables()
     
     def buildColor = state.currentBuild.result == null ? "good" : "warning"
