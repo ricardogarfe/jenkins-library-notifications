@@ -1,20 +1,23 @@
-import hudson.tasks.test.AbstractTestResultAction
-import groovy.json.JsonOutput
 import java.util.Optional
+
+import groovy.json.JsonOutput
+import groovy.transform.Field
+
+import hudson.tasks.junit.CaseResult
 import hudson.tasks.test.AbstractTestResultAction
 import hudson.model.Actionable
-import hudson.tasks.junit.CaseResult
 import hudson.Util
 
 def state = ""
 
-def author = ""
-def message = ""
-def testSummary = ""
-def total = 0
-def failed = 0
-def skipped = 0
-def branchName = ""
+@Field String author = ""
+@Field String message = ""
+@Field String testSummary = ""
+@Field Int total = 0
+@Field Int failed = 0
+@Field Int skipped = 0
+@Field String branchName = ""
+
 
 def notifySlack(text, channel, attachments, slackHook) {
     def slackURL = slackHook
@@ -90,6 +93,9 @@ def populateGlobalVariables() {
 
 def generateTestResultAttachment(script) {
     state = script
+    
+    echo state.getClass()
+    
     populateGlobalVariables()
     
     def buildColor = state.currentBuild.result == null ? "good" : "warning"
