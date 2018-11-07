@@ -8,7 +8,7 @@ import hudson.tasks.test.AbstractTestResultAction
 import hudson.model.Actionable
 import hudson.Util
 
-@Field WorkflowScript state = ""
+def state = null
 
 @Field String author = ""
 @Field String message = ""
