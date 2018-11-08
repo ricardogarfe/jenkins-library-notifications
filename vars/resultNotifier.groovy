@@ -43,7 +43,11 @@ def getLastCommitMessage () {
 }
 
 def getBranchName() {
-    branchName = state.scm.branches[0].name
+    if ("${state.env.BRANCH}") {
+        branchName = "${state.env.BRANCH}"
+    } else {
+        branchName = state.scm.branches[0].name
+    }
 }
 
 def getTestSummary() {
