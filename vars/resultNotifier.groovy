@@ -43,10 +43,10 @@ def getLastCommitMessage () {
 }
 
 def getBranchName() {
-    if ("${state.env.BRANCH}") {
-        branchName = "${state.env.BRANCH}"
+    if ("${state.env.GIT_BRANCH}") {
+        branchName = "${state.env.GIT_BRANCH}"
     } else {
-        branchName = state.scm.branches[0].name
+        branchName = "${state.scmVars.GIT_BRANCH}"
     }
 }
 
